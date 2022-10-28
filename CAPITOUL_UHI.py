@@ -1,7 +1,6 @@
 from uwg import UWG
 # import configparser, os
 # config_file_name = input("Enter the name of the config file: ") or "capitoul_mnp.ini"
-#
 # config = configparser.ConfigParser()
 # project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # config_path = os.path.join(project_path, config_file_name)
@@ -16,7 +15,7 @@ epw_path = "resources/Mondouzil_tdb_td_rh_P_2004.epw" # available in resources d
 #                             vertohor=0.8, grasscover=0.1, treecover=0.1, zone='1A', nday=30)
 
 # Uncomment these lines to initialize the UWG model using a .uwg parameter file
-param_path = "initialize_singapore.uwg"  # available in resources directory.
+param_path = "resources/initialize_Capitoul.uwg"  # available in resources directory.
 model = UWG.from_param_file(param_path, epw_path=epw_path)
 
 model.generate()
