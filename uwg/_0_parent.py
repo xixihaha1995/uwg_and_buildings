@@ -10,7 +10,7 @@ def add_date_index(df, start_date, time_interval_sec):
     df is [date, sensible/latent]
     '''
     date = pd.date_range(start_date, periods=len(df), freq='{}S'.format(time_interval_sec))
-    date = pd.to_datetime(date)
+    date = pd.Series(pd.to_datetime(date))
     year = date[0].year
     this_year_feb_29 = pd.to_datetime(str(year) + '-02-29')
     if year % 4 == 0 and (date == this_year_feb_29).any():
@@ -26,7 +26,7 @@ def save_data_to_csv(saving_data, file_name,case_name, start_time, time_interval
     elif file_name == 'debugging_canyon':
     # 'debugging_canyon' includes wallSun, wallShade, floor, roof, sensWaste(W/per unit footprint area),
     # canTemp_ep, canTemp_vcwg
-        df.columns = ['UWG_CanTemp_K']
+        df.columns = ['UWG_CanTemp_C']
     else:
         df.columns = [f'(m) {file_name}_' + str(0.5 + i) for i in range(len(df.columns))]
     df = add_date_index(df, start_time, time_interval_sec)

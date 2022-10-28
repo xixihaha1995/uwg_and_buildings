@@ -1356,7 +1356,7 @@ class UWG(object):
                 self.RSM)
             self.UCM.UCModel(self.BEM, self.UBL.ublTemp,
                              self.forc, self.geoParam)
-            parent.saving_data['debugging_canyon'].append(self.UCM.canTemp)
+            parent.saving_data['debugging_canyon'].append(self.UCM.canTemp - 273.15)
             self.UBL.ublmodel(
                 self.UCM, self.RSM, self.rural, self.forc, self.geoParam, self.simTime)
 
