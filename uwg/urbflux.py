@@ -8,9 +8,12 @@ except NameError:
 
 from .infracalcs import infracalcs
 from math import log
+from . import _0_parent as parent
+from . import _1_EP_module as EP_module
+from threading import Thread
 
 
-def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM):
+def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM, it):
     """Calculate the surface heat fluxes.
 
     Args:
@@ -35,9 +38,17 @@ def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM):
 
     for j in range(len(BEM)):
         # Building energy model
-        BEM[j].building.BEMCalc(UCM, BEM[j], forc, parameter, simTime)
-        BEM[j].ElecTotal = BEM[j].building.ElecTotal * BEM[j].fl_area  # W m-2
+        if parent.config['Default']['software'] == 'UWG':
+            BEM[j].building.BEMCalc(UCM, BEM[j], forc, parameter, simTime)
+        elif parent.config['Default']['software'] == 'UWG_EP':
+            if not parent.called_ep_bool:
+                parent.called_ep_bool = True
+                ep_thread = Thread(target=EP_module.run_ep)
+                ep_thread.daemon = True
+                ep_thread.start()
+            BEM[j] = parent.BEMCalc_Element(UCM, BEM[j],forc, it, simTime)
 
+        BEM[j].ElecTotal = BEM[j].building.ElecTotal * BEM[j].fl_area  # W m-2
         # Update roof infra calc
         e_roof = BEM[j].roof.emissivity
         T_roof = BEM[j].roof.layerTemp[0]
@@ -52,16 +63,16 @@ def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM):
             infracalcs(UCM, forc, UCM.road.emissivity, e_wall, UCM.roadTemp, T_wall)
 
         # Update element temperatures
-        BEM[j].mass.layerTemp = \
-            BEM[j].mass.Conduction(
-                simTime.dt, BEM[j].building.fluxMass, 1., 0., BEM[j].building.fluxMass)
-        BEM[j].roof.SurfFlux(
-            forc, parameter, simTime, UCM.canHum, T_can, max(forc.wind, UCM.canWind), 1.,
-            BEM[j].building.fluxRoof)
-        BEM[j].wall.SurfFlux(
-            forc, parameter, simTime, UCM.canHum, T_can, UCM.canWind, 1.,
-            BEM[j].building.fluxWall)
-
+        if parent.config['Default']['software'] == 'UWG':
+            BEM[j].mass.layerTemp = \
+                BEM[j].mass.Conduction(
+                    simTime.dt, BEM[j].building.fluxMass, 1., 0., BEM[j].building.fluxMass)
+            BEM[j].roof.SurfFlux(
+                forc, parameter, simTime, UCM.canHum, T_can, max(forc.wind, UCM.canWind), 1.,
+                BEM[j].building.fluxRoof)
+            BEM[j].wall.SurfFlux(
+                forc, parameter, simTime, UCM.canHum, T_can, UCM.canWind, 1.,
+                BEM[j].building.fluxWall)
         # Note the average wall & roof temperature
         UCM.wallTemp = UCM.wallTemp + BEM[j].frac * BEM[j].wall.layerTemp[0]
         UCM.roofTemp = UCM.roofTemp + BEM[j].frac * BEM[j].roof.layerTemp[0]
