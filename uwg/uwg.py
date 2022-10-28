@@ -10,9 +10,13 @@ Note:
     The urban weather generator, Journal of Building Performance Simulation. 6:4,269-281.
     doi: 10.1080/19401493.2012.718797
 """
+# import moudle from parent directory
+
 
 from __future__ import division, print_function
 from functools import reduce
+
+from . import _0_parent as parent
 
 try:
     range = xrange
@@ -1352,6 +1356,7 @@ class UWG(object):
                 self.RSM)
             self.UCM.UCModel(self.BEM, self.UBL.ublTemp,
                              self.forc, self.geoParam)
+            parent.saving_data['debugging_canyon'].append(self.UCM.canTemp)
             self.UBL.ublmodel(
                 self.UCM, self.RSM, self.rural, self.forc, self.geoParam, self.simTime)
 
