@@ -9,8 +9,6 @@ except NameError:
 from .infracalcs import infracalcs
 from math import log
 from . import _0_parent as parent
-from . import _1_EP_module as EP_module
-from threading import Thread
 
 
 def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM, it):
@@ -41,10 +39,6 @@ def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM, it):
         if parent.config['Default']['software'] == 'UWG':
             BEM[j].building.BEMCalc(UCM, BEM[j], forc, parameter, simTime)
         elif parent.config['Default']['software'] == 'UWG_EP':
-            if not parent.called_ep_bool:
-                parent.called_ep_bool = True
-                ep_thread = Thread(target=EP_module.run_ep)
-                ep_thread.start()
             BEM[j] = parent.BEMCalc_Element(UCM, BEM[j],forc, it, simTime)
 
         BEM[j].ElecTotal = BEM[j].building.ElecTotal * BEM[j].fl_area  # W m-2

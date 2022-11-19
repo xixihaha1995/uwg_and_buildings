@@ -1,5 +1,4 @@
 import datetime
-
 import numpy as np, pandas as pd, os, sys
 import configparser, threading, time
 
@@ -13,14 +12,15 @@ def init_all(ini_file_name):
         ep_sensWaste_w_m2_per_footprint_area, uwg_time_index_in_seconds, \
         ep_floor_Text_K, ep_floor_Tint_K, ep_roof_Text_K, ep_roof_Tint_K, \
         ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K, \
-        ep_oaTemp_C
+        ep_oaTemp_C, ep_indoorTemp_C
 
+    project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config = configparser.ConfigParser()
     input_folder = os.path.join(project_path, 'UWG_Cases_Inputs')
     config_path = os.path.join(input_folder, ini_file_name)
     config.read(config_path)
-    project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    output_folder = os.path.join(project_path, 'UWG_Cases_Outputs',ini_file_name[:-3],
+
+    output_folder = os.path.join(project_path, 'UWG_Cases_Outputs',ini_file_name[:-4],
                                  config['Default']['experiments_theme'])
     if not os.path.exists(input_folder):
         os.makedirs(input_folder)
@@ -47,6 +47,7 @@ def init_all(ini_file_name):
 
     ep_sensWaste_w_m2_per_footprint_area = 0
     ep_oaTemp_C = 7
+    ep_indoorTemp_C = 20
 
     ep_floor_Text_K = 300
     ep_floor_Tint_K = 300
@@ -62,15 +63,18 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
         UWG_canTemp_K, UWG_canSpecHum_Ratio, UWG_forcPres_Pa, ep_sensWaste_w_m2_per_footprint_area
 
     sem0.acquire()
-    uwg_time_index_in_seconds = (it + 1) * simTime.dt
+    uwg_time_index_in_seconds = (it ) * simTime.dt
     UWG_canTemp_K = UCM.canTemp
     UWG_canSpecHum_Ratio = UCM.canHum
     UWG_forcPres_Pa = forc.pres
     BEM_building = BEM.building
+    BEM_building.nFloor = max(UCM.bldHeight / float(BEM_building.floor_height), 1)
+    BEM_building.GasTotal = 0
     sem1.release()
 
 
     sem3.acquire()
+    BEM_building.indoor_temp = ep_indoorTemp_C + 273.15
     BEM_building.sensWaste = ep_sensWaste_w_m2_per_footprint_area
     ep_sensWaste_w_m2_per_footprint_area = 0
 
@@ -81,10 +85,9 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
     BEM.roof.layerTemp[0] = ep_roof_Text_K
     BEM_building.ElecTotal = 0
 
-
-    WallshadeT = BEM.wallShade.Text
-    WalllitT = BEM.wallSun.Text
-    RoofT = BEM.roofImp.Text
+    WallshadeT = ep_wallShade_Text_K
+    WalllitT = ep_wallSun_Text_K
+    RoofT = ep_roof_Text_K
     senWaste = BEM_building.sensWaste
 
     data_saving_path = os.path.join(output_folder, 'saving.csv')
@@ -94,9 +97,8 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
         save_path_clean = True
     # start_time + accumulative_seconds
     cur_datetime = datetime.datetime.strptime(config['Default']['start_time'], '%Y-%m-%d %H:%M:%S') + \
-                   datetime.timedelta(seconds=uwg_time_index_in_seconds - simTime.dt)
-    print(f'cur_datetime: {cur_datetime}, indoorTemp: {BEM_building.indoorTemp}')
-
+                   datetime.timedelta(seconds=uwg_time_index_in_seconds)
+    print(f'cur_datetime: {cur_datetime}, canTemp: {UWG_canTemp_K}')
     # if not exist, create the file and write the header
     if not os.path.exists(data_saving_path):
         os.makedirs(os.path.dirname(data_saving_path), exist_ok=True)

@@ -122,7 +122,35 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\resources\DOERefBuildings\BLD1\BLD1_LocationSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\resources\DOERefBuildings\BLD1\BLD1_Schedules.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD1\BLD1_ZoneSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD2\BLD2_BuildingSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD2\BLD2_LocationSummary.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -136,7 +164,35 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\resources\DOERefBuildings\BLD2\BLD2_ZoneSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD3\BLD3_BuildingSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\resources\DOERefBuildings\BLD3\BLD3_Schedules.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD3\BLD3_ZoneSummary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\DOERefBuildings\BLD4\BLD4_BuildingSummary.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

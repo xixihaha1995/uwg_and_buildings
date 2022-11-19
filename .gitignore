@@ -1,1 +1,25 @@
 *.pyc
+# update gitignore command: git rm -r --cached .
+*.xml
+eplusssz.csv
+epluszsz.csv
+*.bnd
+*.edd
+*.eio
+*.err
+*.eso
+*.mtd
+*.mtr
+*.rvaudit
+*.sql
+*.svg
+*.html
+*.htm
+*.mdd
+*.rdd
+*.shd
+*.epJSONout
+*.audit
+*.dbg
+*.end
+*.idd
