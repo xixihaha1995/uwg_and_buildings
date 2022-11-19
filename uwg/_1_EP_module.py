@@ -85,7 +85,7 @@ def overwrite_ep_weather(state):
 
 def mediumOffice_get_ep_results(state):
     global get_ep_results_inited_handle, oat_sensor_handle, \
-        hvac_heat_rejection_sensor_handle, elec_bld_meter_handle, zone_flr_area_handle, \
+        hvac_heat_rejection_sensor_handle, zone_flr_area_handle, \
         zone_indor_temp_sensor_handle, zone_indor_spe_hum_sensor_handle, \
         sens_cool_demand_sensor_handle, sens_heat_demand_sensor_handle, \
         cool_consumption_sensor_handle, heat_consumption_sensor_handle, \
@@ -113,7 +113,6 @@ def mediumOffice_get_ep_results(state):
             parent.ep_api.exchange.get_variable_handle(state,
                                                              "HVAC System Total Heat Rejection Energy",
                                                              "SIMHVAC")
-        elec_bld_meter_handle = parent.ep_api.exchange.get_meter_handle(state, "Electricity:Building")
         zone_flr_area_handle =  parent.ep_api.exchange.get_internal_variable_handle(state, "Zone Floor Area",
                                                                           "CORE_MID")
         zone_indor_temp_sensor_handle = parent.ep_api.exchange.get_variable_handle(state, "Zone Air Temperature",
@@ -212,7 +211,7 @@ def mediumOffice_get_ep_results(state):
                                                                                     "Surface Inside Face Temperature",
                                                                                     "Perimeter_top_ZN_3_Wall_North")
         if (oat_sensor_handle == -1 or hvac_heat_rejection_sensor_handle == -1 or zone_flr_area_handle == -1 or
-                elec_bld_meter_handle == -1 or zone_indor_temp_sensor_handle == -1 or
+                 zone_indor_temp_sensor_handle == -1 or
                 zone_indor_spe_hum_sensor_handle == -1 or
                 sens_cool_demand_sensor_handle == -1 or sens_heat_demand_sensor_handle == -1 or
                 cool_consumption_sensor_handle == -1 or heat_consumption_sensor_handle == -1 or
@@ -241,8 +240,8 @@ def mediumOffice_get_ep_results(state):
     accumulated_time_in_seconds = curr_sim_time_in_seconds - ep_last_call_time_seconds
     ep_last_call_time_seconds = curr_sim_time_in_seconds
     hvac_heat_rejection_J = parent.ep_api.exchange.get_variable_value(state,hvac_heat_rejection_sensor_handle)
-    hvac_waste_w_m2 = hvac_heat_rejection_J / accumulated_time_in_seconds / parent.mediumOfficeBld_floor_area_m2
-    parent.ep_sensWaste_w_m2_per_floor_area += hvac_waste_w_m2
+    hvac_waste_w_m2 = hvac_heat_rejection_J / accumulated_time_in_seconds / parent.mediumOfficeBld_one_floor_area_m2
+    parent.ep_sensWaste_w_m2_per_footprint_area += hvac_waste_w_m2
 
     time_index_alignment_bool = 1 > abs(curr_sim_time_in_seconds - parent.uwg_time_index_in_seconds)
 
@@ -265,9 +264,6 @@ def mediumOffice_get_ep_results(state):
     heat_consumption_w_value = parent.ep_api.exchange.get_variable_value(state,
                                                                                heat_consumption_sensor_handle)
     heat_consumption_w_m2_value = heat_consumption_w_value / zone_floor_area_m2
-
-    elec_bld_meter_j_hourly = parent.ep_api.exchange.get_variable_value(state, elec_bld_meter_handle)
-    elec_bld_meter_w_m2 = elec_bld_meter_j_hourly / 3600 / parent.mediumOfficeBld_floor_area_m2
 
     flr_core_Text_c = parent.ep_api.exchange.get_variable_value(state, flr_core_Text_handle)
     flr_pre1_Text_c = parent.ep_api.exchange.get_variable_value(state, flr_pre1_Text_handle)
@@ -306,8 +302,6 @@ def mediumOffice_get_ep_results(state):
     n_wall_top_1_Solar_w_m2 = parent.ep_api.exchange.get_variable_value(state, n_wall_top_1_Solar_handle)
 
 
-
-    parent.ep_elecTotal_w_m2_per_floor_area = elec_bld_meter_w_m2
     parent.ep_indoorTemp_C = zone_indor_temp_value
     parent.ep_indoorHum_Ratio = zone_indor_spe_hum_value
     parent.ep_sensCoolDemand_w_m2 = sens_cool_demand_w_m2_value

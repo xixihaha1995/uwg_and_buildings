@@ -44,7 +44,6 @@ def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM, it):
             if not parent.called_ep_bool:
                 parent.called_ep_bool = True
                 ep_thread = Thread(target=EP_module.run_ep)
-                ep_thread.daemon = True
                 ep_thread.start()
             BEM[j] = parent.BEMCalc_Element(UCM, BEM[j],forc, it, simTime)
 
