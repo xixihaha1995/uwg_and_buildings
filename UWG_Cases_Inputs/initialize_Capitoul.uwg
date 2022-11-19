@@ -80,7 +80,7 @@ SchTraffic,
 # New
 
 bld,
-MidRiseApartment, Pst80, 1
+medoffice, Pst80, 1
 
 # =================================================
 # OPTIONAL URBAN PARAMETERS
