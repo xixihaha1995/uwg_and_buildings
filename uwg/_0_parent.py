@@ -5,14 +5,15 @@ import configparser, threading, time
 sys.path.insert(0, 'C:\EnergyPlusV22-1-0')
 from pyenergyplus.api import EnergyPlusAPI
 ep_sensWaste_w_m2_per_footprint_area = 0
-save_path_clean = False
+
 def init_all(_config, _save_file_name):
-    global config, save_file_name, sem0, sem1,sem2,sem3, called_ep_bool, ep_api, psychrometric, \
+    global save_path_clean,config, save_file_name, sem0, sem1,sem2,sem3, called_ep_bool, ep_api, psychrometric, \
         input_folder, output_folder,project_path,data_saving_path, uwg_param_path, epw_path, mediumOfficeBld_one_floor_area_m2, \
         ep_sensWaste_w_m2_per_footprint_area, uwg_time_index_in_seconds, \
         ep_floor_Text_K, ep_floor_Tint_K, ep_roof_Text_K, ep_roof_Tint_K, \
         ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K, \
         ep_oaTemp_C, ep_indoorTemp_C
+    save_path_clean = False
     save_file_name = _save_file_name
     project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config = _config
@@ -99,7 +100,7 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
         os.makedirs(os.path.dirname(data_saving_path), exist_ok=True)
         with open(data_saving_path, 'a') as f1:
             # prepare the header string for different sensors
-            header_str = 'cur_datetime,UWG_canTemp_K, senWaste, UWG_forcPres_Pa,WallshadeT, WalllitT, RoofT,'
+            header_str = 'cur_datetime,UWG_canTemp_K,senWaste,UWG_forcPres_Pa,WallshadeT,WalllitT,RoofT,'
             header_str += '\n'
             f1.write(header_str)
     # write the data

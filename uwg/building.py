@@ -585,6 +585,9 @@ class Building(object):
             BEM.gas + volSWH * CpH20 * (T_hot - forc.waterTemp) / self.nFloor /
             self.heateff + self.heatConsump)
 
+        if os.path.exists(parent.data_saving_path) and not parent.save_path_clean:
+            os.remove(parent.data_saving_path)
+            parent.save_path_clean = True
         uwg_time_index_in_seconds = (it) * simTime.dt
         cur_datetime = datetime.datetime.strptime(parent.config['Default']['start_time'], '%Y-%m-%d %H:%M:%S') + \
                        datetime.timedelta(seconds=uwg_time_index_in_seconds)
@@ -594,7 +597,7 @@ class Building(object):
             os.makedirs(os.path.dirname(parent.data_saving_path), exist_ok=True)
             with open(parent.data_saving_path, 'a') as f1:
                 # prepare the header string for different sensors
-                header_str = 'cur_datetime,UWG_canTemp_K, senWaste,'
+                header_str = 'cur_datetime,UWG_canTemp_K,senWaste,'
                 header_str += '\n'
                 f1.write(header_str)
         # write the data
