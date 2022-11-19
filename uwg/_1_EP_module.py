@@ -19,7 +19,11 @@ def api_to_csv(state):
     newFile.write(newFileByteArray)
     newFile.close()
 
-def run_uwg():
+def run_uwg(_config = None, _save_file_name = None):
+    print('run_uwg()')
+    if _config is not None:
+        parent.init_all(_config, _save_file_name)
+    state = parent.ep_api.state_manager.new_state()
     model = UWG.from_param_file(param_path=parent.uwg_param_path,
                                 epw_path=parent.epw_path,
                                 new_epw_dir= parent.output_folder)
@@ -27,7 +31,9 @@ def run_uwg():
     model.simulate()
     # model.write_epw()
 
-def run_ep():
+def run_ep(_config = None, _save_file_name = None):
+    print('run_ep()')
+    parent.init_all(_config, _save_file_name)
     state = parent.ep_api.state_manager.new_state()
     parent.psychrometric = parent.ep_api.functional.psychrometrics(state)
     parent.ep_api.runtime.callback_begin_zone_timestep_before_set_current_weather(state,

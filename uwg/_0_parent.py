@@ -6,23 +6,21 @@ sys.path.insert(0, 'C:\EnergyPlusV22-1-0')
 from pyenergyplus.api import EnergyPlusAPI
 ep_sensWaste_w_m2_per_footprint_area = 0
 save_path_clean = False
-def init_all(ini_file_name):
-    global config, saving_data, sem0, sem1,sem2,sem3, called_ep_bool, ep_api, psychrometric, \
+def init_all(_config, _save_file_name):
+    global config, save_file_name, sem0, sem1,sem2,sem3, called_ep_bool, ep_api, psychrometric, \
         input_folder, output_folder,project_path,data_saving_path, uwg_param_path, epw_path, mediumOfficeBld_one_floor_area_m2, \
         ep_sensWaste_w_m2_per_footprint_area, uwg_time_index_in_seconds, \
         ep_floor_Text_K, ep_floor_Tint_K, ep_roof_Text_K, ep_roof_Tint_K, \
         ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K, \
         ep_oaTemp_C, ep_indoorTemp_C
-
+    save_file_name = _save_file_name
     project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    config = configparser.ConfigParser()
+    config = _config
     input_folder = os.path.join(project_path, 'UWG_Cases_Inputs')
-    config_path = os.path.join(input_folder, ini_file_name)
-    config.read(config_path)
 
     output_folder = os.path.join(project_path, 'UWG_Cases_Outputs',
                                  config['Default']['experiments_theme'])
-    data_saving_path = os.path.join(output_folder, 'saving.csv')
+    data_saving_path = os.path.join(output_folder, f'{save_file_name}.csv')
 
     if not os.path.exists(input_folder):
         os.makedirs(input_folder)
@@ -40,10 +38,6 @@ def init_all(ini_file_name):
     ep_api = EnergyPlusAPI()
     psychrometric = None
 
-    saving_data = {}
-    saving_data['debugging_canyon'] = []
-    saving_data['can_Averaged_temp_k_specHum_ratio_press_pa'] = []
-    saving_data['s_wall_Text_K_n_wall_Text_K'] = []
     mediumOfficeBld_one_floor_area_m2 = 4982 / 3
     uwg_time_index_in_seconds = 0
 
