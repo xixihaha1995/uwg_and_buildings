@@ -25,7 +25,7 @@ def run_uwg():
                                 new_epw_dir= parent.output_folder)
     model.generate()
     model.simulate()
-    model.write_epw()
+    # model.write_epw()
 
 def run_ep():
     state = parent.ep_api.state_manager.new_state()

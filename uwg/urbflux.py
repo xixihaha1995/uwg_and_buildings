@@ -37,7 +37,7 @@ def urbflux(UCM, UBL, BEM, forc, parameter, simTime, RSM, it):
     for j in range(len(BEM)):
         # Building energy model
         if parent.config['Default']['software'] == 'UWG':
-            BEM[j].building.BEMCalc(UCM, BEM[j], forc, parameter, simTime)
+            BEM[j].building.BEMCalc(UCM, BEM[j], forc, parameter, simTime, it)
         elif parent.config['Default']['software'] == 'UWG_EP':
             BEM[j] = parent.BEMCalc_Element(UCM, BEM[j],forc, it, simTime)
 

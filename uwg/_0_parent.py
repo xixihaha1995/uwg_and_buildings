@@ -8,7 +8,7 @@ ep_sensWaste_w_m2_per_footprint_area = 0
 save_path_clean = False
 def init_all(ini_file_name):
     global config, saving_data, sem0, sem1,sem2,sem3, called_ep_bool, ep_api, psychrometric, \
-        input_folder, output_folder,project_path, uwg_param_path, epw_path, mediumOfficeBld_one_floor_area_m2, \
+        input_folder, output_folder,project_path,data_saving_path, uwg_param_path, epw_path, mediumOfficeBld_one_floor_area_m2, \
         ep_sensWaste_w_m2_per_footprint_area, uwg_time_index_in_seconds, \
         ep_floor_Text_K, ep_floor_Tint_K, ep_roof_Text_K, ep_roof_Tint_K, \
         ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K, \
@@ -20,8 +20,10 @@ def init_all(ini_file_name):
     config_path = os.path.join(input_folder, ini_file_name)
     config.read(config_path)
 
-    output_folder = os.path.join(project_path, 'UWG_Cases_Outputs',ini_file_name[:-4],
+    output_folder = os.path.join(project_path, 'UWG_Cases_Outputs',
                                  config['Default']['experiments_theme'])
+    data_saving_path = os.path.join(output_folder, 'saving.csv')
+
     if not os.path.exists(input_folder):
         os.makedirs(input_folder)
     if not os.path.exists(output_folder):
@@ -90,7 +92,6 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
     RoofT = ep_roof_Text_K
     senWaste = BEM_building.sensWaste
 
-    data_saving_path = os.path.join(output_folder, 'saving.csv')
     global save_path_clean
     if os.path.exists(data_saving_path) and not save_path_clean:
         os.remove(data_saving_path)
@@ -98,7 +99,7 @@ def BEMCalc_Element(UCM, BEM,forc, it, simTime):
     # start_time + accumulative_seconds
     cur_datetime = datetime.datetime.strptime(config['Default']['start_time'], '%Y-%m-%d %H:%M:%S') + \
                    datetime.timedelta(seconds=uwg_time_index_in_seconds)
-    print(f'cur_datetime: {cur_datetime}, canTemp: {UWG_canTemp_K}')
+    print(f'cur_datetime: {cur_datetime}, canTemp: {UWG_canTemp_K - 273.15}')
     # if not exist, create the file and write the header
     if not os.path.exists(data_saving_path):
         os.makedirs(os.path.dirname(data_saving_path), exist_ok=True)

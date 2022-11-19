@@ -1,6 +1,11 @@
 """Class of specified building characteristics."""
 from __future__ import division
 
+import datetime
+import os
+
+from . import _0_parent as parent
+
 from .psychrometrics import psychrometrics, moist_air_density
 from .utilities import is_near_zero, float_in_range, float_positive
 
@@ -317,7 +322,7 @@ class Building(object):
         base['initial_temp'] = self.initial_temp
         return base
 
-    def BEMCalc(self, UCM, BEM, forc, parameter, simTime):
+    def BEMCalc(self, UCM, BEM, forc, parameter, simTime, it):
         """Update BEM by a single timestep."""
 
         # total electricity consumption - (W/m^2) of floor
@@ -579,6 +584,25 @@ class Building(object):
         self.GasTotal = (
             BEM.gas + volSWH * CpH20 * (T_hot - forc.waterTemp) / self.nFloor /
             self.heateff + self.heatConsump)
+
+        uwg_time_index_in_seconds = (it) * simTime.dt
+        cur_datetime = datetime.datetime.strptime(parent.config['Default']['start_time'], '%Y-%m-%d %H:%M:%S') + \
+                       datetime.timedelta(seconds=uwg_time_index_in_seconds)
+        print(f'cur_datetime: {cur_datetime}, UCM.canTemp: {UCM.canTemp - 273.15}')
+        # if not exist, create the file and write the header
+        if not os.path.exists(parent.data_saving_path):
+            os.makedirs(os.path.dirname(parent.data_saving_path), exist_ok=True)
+            with open(parent.data_saving_path, 'a') as f1:
+                # prepare the header string for different sensors
+                header_str = 'cur_datetime,UWG_canTemp_K, senWaste,'
+                header_str += '\n'
+                f1.write(header_str)
+        # write the data
+        senWaste = self.sensWaste
+        with open(parent.data_saving_path, 'a') as f1:
+            fmt1 = "%s," * 1 % (cur_datetime) + \
+                   "%.3f," * 2 % (UCM.canTemp, senWaste) + '\n'
+            f1.write(fmt1)
 
     def __repr__(self):
         return 'Building,\n floor_height: {}\n int_heat_night {}\n int_heat_day {}\n ' \

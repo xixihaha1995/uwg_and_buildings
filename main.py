@@ -5,12 +5,16 @@ from uwg import _1_EP_module as EP_module
 
 
 if __name__ == '__main__':
-    prompt = 'Please enter the case name: [CAPITOUL.ini]'
-    ini_file_name = input(prompt) or 'CAPITOUL.ini'
+    prompt = 'Please enter the case name: [bypass.ini]'
+    ini_file_name = input(prompt) or 'bypass.ini'
     # 1. Read configuration, Inputs/#/*.uwg, *.idf for case study
     parent.init_all(ini_file_name)
-    uwg_thread = Thread(target=EP_module.run_ep)
-    uwg_thread.start()
+    if parent.config['Default']['software'] =='UWG_EP':
+        ep_thread = Thread(target=EP_module.run_ep)
+        ep_thread.start()
+    else:
+        uwg_thread = Thread(target=EP_module.run_uwg)
+        uwg_thread.start()
 
 
 
