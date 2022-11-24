@@ -14,6 +14,8 @@ Note:
 
 
 from __future__ import division, print_function
+
+import datetime
 from functools import reduce
 
 from . import _0_parent as parent
@@ -1354,6 +1356,12 @@ class UWG(object):
             self.UCM, self.UBL, self.BEM = urbflux(
                 self.UCM, self.UBL, self.BEM, self.forc, self.geoParam, self.simTime,
                 self.RSM, it)
+            cur_datetime = datetime.datetime.strptime(parent.config['Default']['start_time'],
+                                                      '%Y-%m-%d %H:%M:%S') + \
+                           datetime.timedelta(seconds=it * self.simTime.dt)
+            print(f'current time: {cur_datetime}')
+            bool_later_than_start_time = cur_datetime > \
+                                         datetime.datetime.strptime("2004-06-02 18:50:00", '%Y-%m-%d %H:%M:%S')
             self.UCM.UCModel(self.BEM, self.UBL.ublTemp,
                              self.forc, self.geoParam)
             self.UBL.ublmodel(
