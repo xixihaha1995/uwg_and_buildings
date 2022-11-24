@@ -103,7 +103,7 @@ class UBLDef(object):
                 self.ublTempdx = [self.ublTemp for x in range(len(self.ublTempdx))]
             else:  # Convective problem
                 advCoef = self.perimeter * u_circ * simTime.dt / self.urbArea * 1.4
-                self.ublTemp = (Csurf + advCoef * eqTemp + self.ublTemp) / (1 + advCoef)
+                self.ublTemp = (Csurf + advCoef * eqTemp + self.ublTemp) / (1. + advCoef)
                 self.ublTempdx = [self.ublTemp for x in range(len(self.ublTempdx))]
 
         # ---------------------------------------------------------------------
